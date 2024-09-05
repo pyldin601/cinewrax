@@ -44,8 +44,10 @@ export async function transcode(inputFileUrl: URL, outputFileUrl: URL, encodingP
   const dstFilePath = path.join(tmpDir, dstFileName);
 
   try {
+    // TODO: Should be retried.
     await downloadFile(inputFileUrl, srcFilePath);
     await transcodeFile(srcFilePath, dstFilePath, encodingParameters);
+    // TODO: Should be retried.
     await uploadFile(dstFilePath, outputFileUrl);
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
