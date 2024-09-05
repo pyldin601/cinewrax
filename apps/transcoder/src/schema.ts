@@ -13,21 +13,32 @@ const JsonSchema = z.string().transform((content, ctx) => {
   }
 });
 
+export enum EncodingFormat {
+  MP3,
+  WAV,
+}
+
 const MP3EncodingParametersSchema = z.object({
-  format: z.literal("mp3"),
+  format: z.literal(EncodingFormat.MP3),
   bitrate: z.number().min(64).max(320),
 });
 
 const WAVEncodingParametersSchema = z.object({
-  format: z.literal("wav"),
+  format: z.literal(EncodingFormat.WAV),
 });
 
 export const EncodingParametersSchema = z.union([MP3EncodingParametersSchema, WAVEncodingParametersSchema]);
 
 export const EnvVarsSchema = z
   .object({
-    INPUT_FILE_URL: z.string().url(),
-    OUTPUT_FILE_URL: z.string().url(),
+    INPUT_FILE_URL: z
+      .string()
+      .url()
+      .transform((url) => new URL(url)),
+    OUTPUT_FILE_URL: z
+      .string()
+      .url()
+      .transform((url) => new URL(url)),
     STATUS_REPORT_URL: z.string().url(),
     ENCODING_PARAMETERS: JsonSchema.pipe(EncodingParametersSchema),
   })

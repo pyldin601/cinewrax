@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "typescript": "^5.5.4",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "@types/fluent-ffmpeg": "^2.1.26"
   }
 }
