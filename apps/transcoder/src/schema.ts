@@ -3,7 +3,7 @@ import { z } from "zod";
 const JsonSchema = z.string().transform((content, ctx) => {
   try {
     return JSON.parse(content);
-  } catch (error) {
+  } catch {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "invalid json",
