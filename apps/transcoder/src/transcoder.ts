@@ -2,11 +2,13 @@ import fluentFfmpeg from "fluent-ffmpeg";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import retry from "p-retry";
 
 import { EncodingFormat, EncodingParameters } from "./schema.js";
 import { assertUnreachable } from "./utils.js";
 import { logger } from "./logger.js";
 import { downloadFile, uploadFile } from "./fetch.js";
+import { MAX_DOWNLOAD_ATTEMPTS, MAX_UPLOAD_ATTEMPTS } from "./config.js";
 
 async function transcodeFile(srcFilePath: string, dstFilePath: string, encodingParameters: EncodingParameters) {
   const ffmpegCommand = fluentFfmpeg(srcFilePath);
@@ -44,11 +46,27 @@ export async function transcode(inputFileUrl: URL, outputFileUrl: URL, encodingP
   const dstFilePath = path.join(tmpDir, dstFileName);
 
   try {
-    // TODO: Should be retried.
-    await downloadFile(inputFileUrl, srcFilePath);
+    await retry(() => downloadFile(inputFileUrl, srcFilePath), {
+      onFailedAttempt(error) {
+        logger.warn(
+          { reason: error },
+          `Download attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left.`,
+        );
+      },
+      retries: MAX_DOWNLOAD_ATTEMPTS,
+    });
+
     await transcodeFile(srcFilePath, dstFilePath, encodingParameters);
-    // TODO: Should be retried.
-    await uploadFile(dstFilePath, outputFileUrl);
+
+    await retry(() => uploadFile(dstFilePath, outputFileUrl), {
+      onFailedAttempt(error) {
+        logger.warn(
+          { reason: error },
+          `Upload attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left.`,
+        );
+      },
+      retries: MAX_UPLOAD_ATTEMPTS,
+    });
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
   }
