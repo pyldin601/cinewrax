@@ -1,7 +1,8 @@
-import fluentFfmpeg from "fluent-ffmpeg";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { randomBytes } from "node:crypto";
+import fluentFfmpeg from "fluent-ffmpeg";
 import retry from "p-retry";
 
 import { EncodingFormat, EncodingParameters } from "./schema.js";
@@ -38,12 +39,18 @@ async function transcodeFile(srcFilePath: string, dstFilePath: string, encodingP
 
 export async function transcode(inputFileUrl: URL, outputFileUrl: URL, encodingParameters: EncodingParameters) {
   const tmpDir = await mkdtemp(path.join(os.tmpdir(), "cinewrax-"));
+  logger.debug(`Temp dir created: ${tmpDir}`);
 
   const srcFileName = path.basename(inputFileUrl.pathname);
   const srcFilePath = path.join(tmpDir, srcFileName);
 
-  const dstFileName = path.basename(outputFileUrl.pathname);
+  logger.debug(`Source file: ${srcFileName}`);
+
+  const prefix = randomBytes(4).toString("hex");
+  const dstFileName = `${prefix}-${path.basename(outputFileUrl.pathname)}`;
   const dstFilePath = path.join(tmpDir, dstFileName);
+
+  logger.debug(`Destination file: ${dstFileName}`);
 
   try {
     await retry(() => downloadFile(inputFileUrl, srcFilePath), {
@@ -69,5 +76,6 @@ export async function transcode(inputFileUrl: URL, outputFileUrl: URL, encodingP
     });
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
+    logger.debug(`Temp dir deleted: ${tmpDir}`);
   }
 }

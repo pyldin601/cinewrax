@@ -7,20 +7,32 @@ const JsonSchema = z.string().transform((content, ctx) => {
   } catch {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "invalid json",
+      message: "Invalid JSON",
     });
-    return z.never;
+    return z.NEVER;
+  }
+});
+
+const URLSchema = z.string().transform((content, ctx) => {
+  try {
+    return new URL(content);
+  } catch {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Invalid URL",
+    });
+    return z.NEVER;
   }
 });
 
 export enum EncodingFormat {
-  MP3,
-  WAV,
+  MP3 = "mp3",
+  WAV = "wav",
 }
 
 const MP3EncodingParametersSchema = z.object({
   format: z.literal(EncodingFormat.MP3),
-  bitrate: z.number().min(64).max(320),
+  bitrate: z.number().min(64_000).max(320_000),
 });
 
 const WAVEncodingParametersSchema = z.object({
@@ -31,15 +43,9 @@ export const EncodingParametersSchema = z.union([MP3EncodingParametersSchema, WA
 
 export const EnvVarsSchema = z
   .object({
-    INPUT_FILE_URL: z
-      .string()
-      .url()
-      .transform((url) => new URL(url)),
-    OUTPUT_FILE_URL: z
-      .string()
-      .url()
-      .transform((url) => new URL(url)),
-    STATUS_REPORT_URL: z.string().url(),
+    INPUT_FILE_URL: URLSchema,
+    OUTPUT_FILE_URL: URLSchema,
+    STATUS_REPORT_URL: URLSchema,
     ENCODING_PARAMETERS: JsonSchema.pipe(EncodingParametersSchema),
   })
   .transform((content) => camelcaseKeys(content));
