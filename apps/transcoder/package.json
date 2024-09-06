@@ -1,0 +1,28 @@
+{
+  "name": "@cinewrax/encoder",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node dist/src/index.ts",
+    "dev": "dotenvx run -- node --no-warnings --loader ts-node/esm src/index.ts",
+    "build": "tsc --build tsconfig.json",
+    "clean": "tsc --build tsconfig.json --clean"
+  },
+  "dependencies": {
+    "zod": "^3.23.8",
+    "fluent-ffmpeg": "^2.1.3",
+    "pino": "^9.4.0",
+    "camelcase-keys": "^9.1.3",
+    "p-retry": "^6.2.0",
+    "serialize-error": "^11.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "ts-node": "^10.9.2",
+    "@types/fluent-ffmpeg": "^2.1.26",
+    "@dotenvx/dotenvx": "^1.14.0"
+  }
+}

@@ -2,6 +2,10 @@
   "name": "@cinewrax/root",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
+  "workspaces": ["transcoder"],
+  "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
+  "license": "MIT",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
