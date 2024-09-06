@@ -44,15 +44,12 @@ export async function transcode(inputFileUrl: URL, outputFileUrl: URL, encodingP
   const srcFileName = path.basename(inputFileUrl.pathname);
   const srcFilePath = path.join(tmpDir, srcFileName);
 
-  logger.debug(`Source file: ${srcFileName}`);
-
   const prefix = randomBytes(4).toString("hex");
   const dstFileName = `${prefix}-${path.basename(outputFileUrl.pathname)}`;
   const dstFilePath = path.join(tmpDir, dstFileName);
 
-  logger.debug(`Destination file: ${dstFileName}`);
-
   try {
+    logger.debug(`Downloading from ${inputFileUrl.toString()} to ${srcFilePath}`);
     await retry(() => downloadFile(inputFileUrl, srcFilePath), {
       onFailedAttempt(error) {
         logger.warn(
@@ -63,8 +60,10 @@ export async function transcode(inputFileUrl: URL, outputFileUrl: URL, encodingP
       retries: MAX_DOWNLOAD_ATTEMPTS,
     });
 
+    logger.debug({ encodingParameters }, `Transcoding ${srcFilePath} to ${dstFilePath}`);
     await transcodeFile(srcFilePath, dstFilePath, encodingParameters);
 
+    logger.debug(`Uploading ${dstFilePath} to ${outputFileUrl.toString()}`);
     await retry(() => uploadFile(dstFilePath, outputFileUrl), {
       onFailedAttempt(error) {
         logger.warn(
