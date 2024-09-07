@@ -1,23 +1,19 @@
-import { EnvVarsSchema } from "./schema.js";
-import { logger } from "./logger.js";
-import * as process from "node:process";
-import { ERRONEOUS_EXIT_CODE } from "./config.js";
-import { transcode } from "./transcoder.js";
 import { serializeError } from "serialize-error";
 
-const result = EnvVarsSchema.safeParse(process.env);
-if (!result.success) {
-  logger.error({ reason: result.error.flatten() }, "One or more variables are missing or have invalid formats.");
-  process.exit(ERRONEOUS_EXIT_CODE);
-}
-const { inputFileUrl, outputFileUrl, encodingParameters } = result.data;
+import { exit } from "node:process";
+
+import { logger } from "./logger.js";
+import { transcode } from "./transcoder.js";
+import { config } from "./config.js";
 
 try {
-  await transcode(inputFileUrl, outputFileUrl, encodingParameters);
+  await transcode(config.inputFileUrl, config.outputFileUrl, config.encodingParameters, (percent) => {
+    logger.info(`Transcoding progress: ${percent}`);
+  });
 } catch (error) {
   const serializedError = serializeError(error);
   logger.error({ reason: serializedError }, "The input file may be corrupted or unsupported.");
-  process.exit(ERRONEOUS_EXIT_CODE);
+  exit(1);
 }
 
-process.exit(0);
+exit(0);

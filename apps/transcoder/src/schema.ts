@@ -1,53 +1,54 @@
 import camelcaseKeys from "camelcase-keys";
 import { z } from "zod";
+import { json, stringifiedNumber, url } from "./schema-shared.js";
 
-const JsonSchema = z.string().transform((content, ctx) => {
-  try {
-    return JSON.parse(content);
-  } catch {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Invalid JSON",
-    });
-    return z.NEVER;
-  }
-});
-
-const URLSchema = z.string().transform((content, ctx) => {
-  try {
-    return new URL(content);
-  } catch {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Invalid URL",
-    });
-    return z.NEVER;
-  }
-});
-
-export enum EncodingFormat {
+// Encoding Parameters
+export enum OutputFormat {
   MP3 = "mp3",
   WAV = "wav",
 }
 
-const MP3EncodingParametersSchema = z.object({
-  format: z.literal(EncodingFormat.MP3),
-  bitrate: z.number().min(64_000).max(320_000),
-});
+export const encodingParameters = z.union([
+  z.object({
+    format: z.literal(OutputFormat.MP3),
+    bitrate: z.number().min(64_000).max(320_000),
+  }),
+  z.object({
+    format: z.literal(OutputFormat.WAV),
+  }),
+]);
 
-const WAVEncodingParametersSchema = z.object({
-  format: z.literal(EncodingFormat.WAV),
-});
+export type EncodingParameters = z.output<typeof encodingParameters>;
 
-export const EncodingParametersSchema = z.union([MP3EncodingParametersSchema, WAVEncodingParametersSchema]);
+// Environment Variables
+export enum SubmitMethod {
+  PUT = "put",
+  POST = "post",
+}
 
-export const EnvVarsSchema = z
+export enum LogLevel {
+  FATAL = "fatal",
+  ERROR = "error",
+  WARN = "warn",
+  INFO = "info",
+  DEBUG = "debug",
+  TRACE = "trace",
+}
+
+export const envVars = z
   .object({
-    INPUT_FILE_URL: URLSchema,
-    OUTPUT_FILE_URL: URLSchema,
-    STATUS_REPORT_URL: URLSchema,
-    ENCODING_PARAMETERS: JsonSchema.pipe(EncodingParametersSchema),
-  })
-  .transform((content) => camelcaseKeys(content));
+    INPUT_FILE_URL: url(),
+    INPUT_DOWNLOAD_RETRIES: stringifiedNumber().default(3),
 
-export type EncodingParameters = z.output<typeof EncodingParametersSchema>;
+    OUTPUT_FILE_URL: url(),
+    OUTPUT_SUBMIT_METHOD: z.nativeEnum(SubmitMethod).default(SubmitMethod.PUT),
+    OUTPUT_UPLOAD_RETRIES: stringifiedNumber().default(3),
+
+    STATUS_REPORT_URL: url(),
+    STATUS_REPORT_METHOD: z.nativeEnum(SubmitMethod).default(SubmitMethod.PUT),
+
+    ENCODING_PARAMETERS: json().pipe(encodingParameters),
+
+    LOG_LEVEL: z.nativeEnum(LogLevel).default(LogLevel.INFO),
+  })
+  .transform((config) => camelcaseKeys(config));
