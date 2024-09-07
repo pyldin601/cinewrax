@@ -2,7 +2,8 @@ import fs from "node:fs";
 import { stat } from "node:fs/promises";
 import { finished } from "node:stream/promises";
 import { Readable } from "node:stream";
-import { OUTPUT_SUBMIT_METHOD } from "./config.js";
+
+import { config } from "./config.js";
 
 export async function downloadFile(url: URL, dstPath: string) {
   const srcRes = await fetch(url);
@@ -21,7 +22,7 @@ export async function uploadFile(srcPath: string, dstUrl: URL) {
 
   const readStream = fs.createReadStream(srcPath);
   const result = await fetch(dstUrl, {
-    method: OUTPUT_SUBMIT_METHOD,
+    method: config.outputSubmitMethod,
     headers: { "Content-Length": `${fileSizeInBytes}` },
     duplex: "half",
     body: readStream,

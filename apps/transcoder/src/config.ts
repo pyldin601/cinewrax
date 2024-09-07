@@ -1,7 +1,14 @@
-export const OUTPUT_SUBMIT_METHOD = "PUT";
-export const PROGRESS_REPORT_METHOD = "PUT";
+import { logger } from "./logger.js";
+import { envVars } from "./schema.js";
 
-export const MAX_DOWNLOAD_ATTEMPTS = 3;
-export const MAX_UPLOAD_ATTEMPTS = 3;
+const envs = envVars.safeParse(process.env);
 
-export const ERRONEOUS_EXIT_CODE = 1;
+if (!envs.success) {
+  logger.error(
+    { reason: envs.error.format() },
+    "One or more environment variables are missing or have invalid formats.",
+  );
+  process.exit(1);
+}
+
+export const config = envs.data;
