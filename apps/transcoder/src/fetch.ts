@@ -5,7 +5,6 @@ import { Readable } from "node:stream";
 
 import { config } from "./config.js";
 import { StatusResponse } from "./status.js";
-import { logger } from "./logger.js";
 
 export async function downloadFile(url: URL, dstPath: string) {
   const srcRes = await fetch(url);
