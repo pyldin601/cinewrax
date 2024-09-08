@@ -1,3 +1,7 @@
+import { serializeError } from "serialize-error";
+import { sendStatus as _sendStatus } from "./fetch.js";
+import { logger } from "./logger.js";
+
 export enum Status {
   START = "start",
   DOWNLOAD = "download",
@@ -9,7 +13,7 @@ export enum Status {
   FINISH = "finish",
 }
 
-type StatusResponse =
+export type StatusResponse =
   | { status: Status.START }
   | { status: Status.DOWNLOAD }
   | { status: Status.DOWNLOAD_FAILED; reason?: string }
@@ -19,6 +23,13 @@ type StatusResponse =
   | { status: Status.UPLOAD_FAILED; reason?: string }
   | { status: Status.FINISH };
 
-export async function sendStatus(_resp: StatusResponse): Promise<void> {
-  // TODO
+export async function sendStatus(status: StatusResponse): Promise<void> {
+  try {
+    logger.debug({ status }, "Sending transcoding status");
+    await _sendStatus(status);
+  } catch (error) {
+    const serializedError = serializeError(error);
+
+    logger.warn({ reason: serializedError }, "Unable to send transcoding status");
+  }
 }
