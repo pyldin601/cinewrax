@@ -3,7 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "workspaces": ["transcoder"],
+  "workspaces": [
+    "transcoder",
+    "transcoder-manager",
+    "shared"
+  ],
   "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
   "license": "MIT",
   "scripts": {
