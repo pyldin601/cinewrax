@@ -4,6 +4,7 @@ import { finished } from "node:stream/promises";
 import { Readable } from "node:stream";
 
 import { config } from "./config.js";
+import { StatusResponse } from "./status.js";
 
 export async function downloadFile(url: URL, dstPath: string) {
   const srcRes = await fetch(url);
@@ -30,5 +31,22 @@ export async function uploadFile(srcPath: string, dstUrl: URL) {
 
   if (!result.ok) {
     throw new Error(`Unable to upload to URL - ${dstUrl.toString()}`);
+  }
+}
+
+export async function sendStatus(status: StatusResponse) {
+  const resp = await fetch(config.statusReportUrl, {
+    method: config.statusReportMethod,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(status),
+  });
+
+  if (!resp.ok) {
+    const reason = await resp.text();
+
+    throw new Error("Sending status has failed", { cause: reason });
   }
 }
