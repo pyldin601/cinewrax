@@ -1,11 +1,19 @@
-import { envVars } from "./schema.js";
+import { z } from "zod";
 
-const envs = envVars.safeParse(process.env);
+import { getEnvNumberValue, getEnvValue } from "@cinewrax/shared/lib/config.js";
 
-if (!envs.success) {
-  throw new Error("One or more environment variables are missing or have invalid values.", {
-    cause: envs.error.format(),
-  });
+export enum LogLevel {
+  FATAL = "fatal",
+  ERROR = "error",
+  WARN = "warn",
+  INFO = "info",
+  DEBUG = "debug",
+  TRACE = "trace",
 }
 
-export const config = envs.data;
+const env = process.env;
+
+export const config = {
+  logLevel: getEnvValue(env, "LOG_LEVEL", z.nativeEnum(LogLevel).default(LogLevel.INFO)),
+  port: getEnvNumberValue(env, "PORT"),
+};
