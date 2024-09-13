@@ -16,4 +16,5 @@ const env = process.env;
 export const config = {
   logLevel: getEnvValue(env, "LOG_LEVEL", z.nativeEnum(LogLevel).default(LogLevel.INFO)),
   port: getEnvNumberValue(env, "PORT", 8080),
+  redisUrl: getEnvValue(env, "REDIS_URL", z.string().url()),
 };
