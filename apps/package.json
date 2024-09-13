@@ -6,7 +6,8 @@
   "workspaces": [
     "transcoder",
     "transcoder-manager",
-    "shared"
+    "shared",
+    "pubsub"
   ],
   "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
   "license": "MIT",
