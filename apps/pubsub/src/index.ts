@@ -19,3 +19,7 @@ const server = app.listen(config.port, () => {
 });
 
 ws.attach(server);
+
+// TODO Await shutdown signal
+// TODO Disconnect
+// TODO Shutdown
