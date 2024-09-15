@@ -5,7 +5,7 @@ import { logger } from "./logger.js";
 import { createApp } from "./http.js";
 import { createWebSocket } from "./ws.js";
 
-const pubClient = Redis.createClient(config.redisUrl);
+const pubClient = new Redis(config.redisUrl);
 const subClient = pubClient.duplicate();
 
 pubClient.on("error", (err) => logger.error(err));
