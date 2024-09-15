@@ -1,0 +1,37 @@
+.container {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.frame {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.heading {
+    font-size: 6vw;
+    display: block;
+    text-align: center;
+    padding: 8px 16px;
+}
+
+.fileInput {
+    cursor: pointer;
+    display: flex;
+    padding: 1.5vw 2.5vw;
+    background-color: #007bff;
+    color: white;
+    font-size: 2vw;
+    border: none;
+    border-radius: 3vw;
+    transition: background-color ease-in 250ms;
+}
+
+.fileInput:hover {
+    background-color: #1b87fa;
+}
