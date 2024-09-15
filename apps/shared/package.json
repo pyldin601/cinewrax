@@ -1,0 +1,17 @@
+{
+  "name": "@cinewrax/shared",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --build tsconfig.json"
+  },
+  "peerDependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
