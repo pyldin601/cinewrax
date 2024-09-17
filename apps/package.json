@@ -7,7 +7,8 @@
     "transcoder",
     "transcoder-manager",
     "shared",
-    "pubsub"
+    "pubsub",
+    "cinewrax"
   ],
   "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
   "license": "MIT",
