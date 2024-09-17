@@ -40,7 +40,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: Dockerfile
           context: apps/cinewrax
           push: true
           tags: pldin601/cinewrax-apps-cinewrax:${{ needs.tag.outputs.TAG }}
