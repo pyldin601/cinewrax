@@ -4,7 +4,7 @@ import { Redis } from "ioredis";
 
 export function createWebSocket(pubRedisClient: Redis, subRedisClient: Redis): Server {
   const io = new Server({
-    path: "/api/ws/",
+    path: "/socket.io/",
     transports: ["websocket"],
     adapter: createAdapter(pubRedisClient, subRedisClient),
   });
