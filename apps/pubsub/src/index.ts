@@ -11,8 +11,11 @@ const subClient = pubClient.duplicate();
 pubClient.on("error", (err) => logger.error(err));
 subClient.on("error", (err) => logger.error(err));
 
+await pubClient.ping();
+await subClient.ping();
+
 const ws = createWebSocket(pubClient, subClient);
-const app = createApp(ws);
+const app = createApp(ws, pubClient, subClient);
 
 const server = app.listen(config.port, () => {
   logger.info(`Server is running on port ${config.port}`);
