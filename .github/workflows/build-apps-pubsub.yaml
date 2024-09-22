@@ -9,20 +9,16 @@ on:
 
 jobs:
   tag:
-    name: Extract tag name
+    name: Extract short sha
     runs-on: ubuntu-latest
     outputs:
-      TAG: ${{ fromJSON(steps.tag.outputs.result) }}
+      short: ${{ fromJSON(steps.sha.outputs.result) }}
     steps:
-      - name: Extract the tag name
-        id: tag
+      - name: Extract short SHA
+        id: sha
         uses: actions/github-script@v7.0.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            return context.payload.ref === "refs/heads/main"
-              ? 'latest'
-              : context.payload.ref.replace(/^refs\/(tags|heads)\//, '');
+          script: context.sha.substring(0, 7);
 
   build-app:
     needs: [ tag ]
@@ -43,7 +39,7 @@ jobs:
           file: apps/pubsub/Dockerfile
           context: ./apps
           push: true
-          tags: pldin601/cinewrax-apps-pubsub:${{ needs.tag.outputs.TAG }}
+          tags: pldin601/cinewrax-apps-pubsub:${{ needs.tag.outputs.short }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           load: true
