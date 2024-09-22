@@ -1,4 +1,4 @@
-name: "Build cinewrax app docker image"
+name: "Build pubsub app docker image"
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
   build-app:
     needs: [ tag ]
     runs-on: ubuntu-latest
-    name: Build Cinewrax App
+    name: Build Pubsub App
     steps:
       - uses: actions/checkout@v4
       - name: Login to Docker Hub
@@ -36,10 +36,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: apps/cinewrax/Dockerfile
+          file: apps/pubsub/Dockerfile
           context: ./apps
           push: true
-          tags: pldin601/cinewrax-apps-cinewrax:${{ needs.tag.outputs.short }}
+          tags: pldin601/cinewrax-apps-pubsub:${{ needs.tag.outputs.short }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           load: true
