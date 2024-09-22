@@ -4,6 +4,7 @@ import { config } from "./config.js";
 import { logger } from "./logger.js";
 import { createApp } from "./http.js";
 import { createWebSocket } from "./ws.js";
+import { awaitGracefulShutdown, closeServerGracefully } from "@cinewrax/shared/lib/signals.js";
 
 const pubClient = new Redis(config.redisUrl);
 const subClient = pubClient.duplicate();
@@ -23,6 +24,17 @@ const server = app.listen(config.port, () => {
 
 ws.attach(server);
 
-// TODO Await shutdown signal
-// TODO Disconnect
-// TODO Shutdown
+const signal = await awaitGracefulShutdown();
+
+logger.info(`Received shutdown signal: ${signal}`);
+
+// Stop servers
+await closeServerGracefully(server);
+await closeServerGracefully(ws);
+
+// Close redis clients
+await pubClient.quit();
+await subClient.quit();
+
+// Exit
+process.exit(0);
