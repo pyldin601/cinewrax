@@ -1,4 +1,9 @@
-FROM node:18-alpine AS builder
+FROM node:18-alpine AS base
+
+
+FROM base AS builder
+
+ENV NEXT_TELEMETRY_DISABLED=1
 
 WORKDIR /app
 
@@ -12,18 +17,30 @@ COPY cinewrax ./cinewrax
 
 WORKDIR /app/cinewrax
 
-RUN NEXT_TELEMETRY_DISABLED=1 npm run build
+RUN npm run build
 
-FROM node:18-alpine AS runner
+
+FROM base AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/cinewrax/.next ./cinewrax/
-#COPY --from=builder /app/cinewrax/public ./cinewrax/
-COPY --from=builder /app/cinewrax/package.json ./cinewrax/
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+COPY --from=builder --chown=nextjs:nodejs /app/cinewrax/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/cinewrax/.next/static ./cinewrax/.next/static
+
+USER nextjs
 
 EXPOSE 3000
 
-CMD ["npm", "start", "--workspace", "@cinewrax/cinewrax"]
+ENV PORT=3000
+
+ENV HOSTNAME="0.0.0.0"
+CMD ["node", "cinewrax/server.js"]
