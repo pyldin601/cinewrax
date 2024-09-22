@@ -33,7 +33,7 @@ FROM base AS runner
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-COPY node_modules ./node_modules
+COPY --from=builder /app/node_modules ./node_modules
 
 WORKDIR /app/shared
 
