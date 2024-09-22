@@ -3,13 +3,13 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json tsconfig.json ./
-COPY apps/cinewrax/package.json apps/cinewrax/tsconfig.json ./apps/cinewrax/
-COPY apps/cinewrax/next.config.mjs apps/cinewrax/next-env.d.ts ./apps/cinewrax/
+COPY cinewrax/package.json cinewrax/tsconfig.json ./cinewrax/
+COPY cinewrax/next.config.mjs cinewrax/next-env.d.ts ./cinewrax/
 
-RUN npm install --prefix apps/cinewrax
+RUN npm install --prefix cinewrax
 
-COPY apps/cinewrax ./apps/cinewrax
+COPY cinewrax ./cinewrax
 
-WORKDIR /app/apps/cinewrax
+WORKDIR /app/cinewrax
 
 RUN npm run build
