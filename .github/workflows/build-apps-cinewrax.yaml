@@ -3,7 +3,7 @@ name: "Build cinewrax app docker image"
 on:
   push:
     branches:
-      - 'main'
+      - '**'
     tags:
       - '**'
 
