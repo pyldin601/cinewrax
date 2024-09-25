@@ -1,7 +1,7 @@
 import "../globals.css";
 import styles from "./App.module.css";
 
-export default async function App() {
+export default async function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.frame}>

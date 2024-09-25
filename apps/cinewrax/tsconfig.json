@@ -4,6 +4,7 @@
     "jsx": "preserve",
     "noEmit": true,
     "isolatedModules": true,
+    "moduleResolution": "bundler",
     "plugins": [
       {
         "name": "next"
