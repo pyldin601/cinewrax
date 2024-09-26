@@ -1,29 +1,91 @@
 "use client";
 
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Slider,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
+
 import { useSessionId } from "../../hooks/useSessionId";
 
 export default function Convert() {
   const sessionId = useSessionId();
 
+  const [audioFormat, setAudioFormat] = useState("MP3");
+  const [bitrate, setBitrate] = useState(128);
+  const [file, setFile] = useState<null | File>(null);
+
+  const handleAudioFormatChange = (event) => {
+    setAudioFormat(event.target.value);
+  };
+
+  const handleBitrateChange = (event, newValue) => {
+    setBitrate(newValue);
+  };
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
   return (
-    <div>
-      <div>
-        <div>
-          <h2>Choose file</h2>
-          <input type={"file"} />
-        </div>
-        <div>
-          <h2>Choose format</h2>
-          <div>Formats...</div>
-        </div>
-        <div>
-          <h2>Choose bitrate</h2>
-          <div>Bitrate...</div>
-        </div>
-        <div>
-          <button>Convert</button>
-        </div>
-      </div>
-    </div>
+    <Box sx={{ maxWidth: 400, margin: "auto", padding: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Audio Converter
+      </Typography>
+
+      {/* File Input */}
+      <FormControl fullWidth sx={{ mb: 2 }}>
+        <TextField
+          type="file"
+          onChange={handleFileChange}
+          inputProps={{ accept: "audio/*" }}
+          helperText={file ? `Selected: ${file.name}` : "Choose an audio file"}
+        />
+      </FormControl>
+
+      {/* Toggle for Audio Format */}
+      <FormControl component="fieldset">
+        <Typography component="legend">Select Audio Format</Typography>
+        <RadioGroup
+          aria-label="audio-format"
+          name="audio-format"
+          value={audioFormat}
+          onChange={handleAudioFormatChange}
+          row
+        >
+          <FormControlLabel value="MP3" control={<Radio />} label="MP3" />
+          <FormControlLabel value="WAV" control={<Radio />} label="WAV" />
+        </RadioGroup>
+      </FormControl>
+
+      {/* Bitrate Slider for MP3 */}
+      {audioFormat === "MP3" && (
+        <Box sx={{ mt: 4 }}>
+          <Typography gutterBottom>Bitrate: {bitrate} kbps</Typography>
+          <Slider value={bitrate} min={64} max={320} step={1} onChange={handleBitrateChange} valueLabelDisplay="auto" />
+        </Box>
+      )}
+
+      {/* Submit Button */}
+      <Button
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 4 }}
+        onClick={() => {
+          console.log(`Audio format: ${audioFormat}, Bitrate: ${bitrate} kbps`);
+        }}
+      >
+        Convert Audio
+      </Button>
+    </Box>
   );
 }
