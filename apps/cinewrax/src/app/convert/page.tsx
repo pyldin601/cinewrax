@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { ChangeEventHandler, useState } from "react";
 
 import { useSessionId } from "../../hooks/useSessionId";
 
@@ -23,15 +23,20 @@ export default function Convert() {
   const [bitrate, setBitrate] = useState(128);
   const [file, setFile] = useState<null | File>(null);
 
-  const handleAudioFormatChange = (event) => {
+  const handleAudioFormatChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setAudioFormat(event.target.value);
   };
 
-  const handleBitrateChange = (event, newValue) => {
-    setBitrate(newValue);
+  const handleBitrateChange = (event: Event, newValue: number | number[]) => {
+    setBitrate(newValue as number);
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    if (event.target.files === null || event.target.files.length === 0) {
+      setFile(null);
+      return;
+    }
+
     setFile(event.target.files[0]);
   };
 
