@@ -81,8 +81,21 @@ export const ConvertForm: React.FC<Props> = ({ sessionId }) => {
         color="primary"
         fullWidth
         sx={{ mt: 4 }}
-        onClick={() => {
-          console.log(`Audio format: ${audioFormat}, Bitrate: ${bitrate} kbps`);
+        onClick={async () => {
+          const response = fetch("/api/upload", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sessionId,
+              transcodingId: "transcodingId",
+              fileId: "fileId",
+              filename: "filename",
+            }),
+          });
+
+          console.log(response);
         }}
       >
         Convert Audio
