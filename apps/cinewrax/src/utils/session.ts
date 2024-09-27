@@ -1,12 +1,29 @@
 import { v4 as uuidv4 } from "uuid";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
-const SESSION_ID_KEY = "cinewrax-session";
+const SESSION_ID_COOKIE = "cinewraxSessionId";
+const SESSION_ID_COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year in seconds
 
-export function getOrInitSessionId(): string {
-  let sessionId = localStorage.getItem(SESSION_ID_KEY);
+export function getSessionId(): string {
+  const cookiesStore = cookies();
+  const sessionId = cookiesStore.get(SESSION_ID_COOKIE);
+
   if (!sessionId) {
-    sessionId = uuidv4();
-    localStorage.setItem(SESSION_ID_KEY, sessionId);
+    throw new Error("The session should be initialized.");
   }
-  return sessionId;
+
+  return sessionId.value;
+}
+
+export function initSessionId(request: NextRequest, response: NextResponse) {
+  const cookieStore = request.cookies;
+
+  if (!cookieStore.has(SESSION_ID_COOKIE)) {
+    const sessionId = uuidv4();
+
+    response.cookies.set(SESSION_ID_COOKIE, sessionId, {
+      maxAge: SESSION_ID_COOKIE_MAX_AGE,
+    });
+  }
 }

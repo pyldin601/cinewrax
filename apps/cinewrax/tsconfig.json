@@ -5,13 +5,15 @@
     "noEmit": true,
     "isolatedModules": true,
     "moduleResolution": "bundler",
-    "module": "es2015",
+    "module": "esnext",
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "lib": ["dom"]
+    "lib": [
+      "dom"
+    ]
   },
   "include": [
     "next-env.d.ts",
