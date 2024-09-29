@@ -5,6 +5,9 @@ FROM base AS builder
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
+
 WORKDIR /app
 
 COPY package.json package-lock.json tsconfig.json ./

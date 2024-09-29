@@ -82,7 +82,7 @@ export const ConvertForm: React.FC<Props> = ({ sessionId }) => {
         fullWidth
         sx={{ mt: 4 }}
         onClick={async () => {
-          const response = fetch("/api/upload", {
+          const response = await fetch("/api/upload", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -96,6 +96,8 @@ export const ConvertForm: React.FC<Props> = ({ sessionId }) => {
           });
 
           console.log(response);
+
+          throw new Error("Some error");
         }}
       >
         Convert Audio
