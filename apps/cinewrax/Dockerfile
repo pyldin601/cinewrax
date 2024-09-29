@@ -5,8 +5,7 @@ FROM base AS builder
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-ARG SENTRY_AUTH_TOKEN
-ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
+RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN
 
 WORKDIR /app
 
