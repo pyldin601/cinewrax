@@ -38,6 +38,8 @@ jobs:
         with:
           file: apps/cinewrax/Dockerfile
           context: ./apps
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
           push: true
           tags: pldin601/cinewrax-apps-cinewrax:${{ needs.tag.outputs.short }}
           cache-from: type=gha

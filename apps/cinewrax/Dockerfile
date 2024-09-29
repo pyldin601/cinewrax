@@ -5,6 +5,8 @@ FROM base AS builder
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN
+
 WORKDIR /app
 
 COPY package.json package-lock.json tsconfig.json ./
