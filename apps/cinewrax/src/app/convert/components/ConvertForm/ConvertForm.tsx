@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
   Typography,
   FormHelperText,
 } from "@mui/material";
+import { useSelectFiles } from "../../../../hooks/useSelectFiles";
 
 interface Props {
   readonly sessionId: string;
@@ -40,8 +41,16 @@ export const ConvertForm: React.FC<Props> = ({ sessionId }) => {
     setFile(event.target.files[0]);
   };
 
+  const { selectedFiles, selectFiles, FileInput } = useSelectFiles(".mp3,.wav");
+
+  useEffect(() => {
+    console.log("selected", selectedFiles);
+  }, [selectedFiles]);
+
   return (
     <Box sx={{ maxWidth: 400, margin: "auto", padding: 4 }}>
+      {FileInput}
+
       <Typography variant="h4" component="h1">
         Audio Converter
       </Typography>
@@ -81,24 +90,25 @@ export const ConvertForm: React.FC<Props> = ({ sessionId }) => {
         color="primary"
         fullWidth
         sx={{ mt: 4 }}
-        onClick={async () => {
-          const response = await fetch("/api/upload", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              sessionId,
-              transcodingId: "transcodingId",
-              fileId: "fileId",
-              filename: "filename",
-            }),
-          });
-
-          console.log(response);
-
-          throw new Error("Some error");
-        }}
+        onClick={selectFiles}
+        // onClick={async () => {
+        //   const response = await fetch("/api/upload", {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify({
+        //       sessionId,
+        //       transcodingId: "transcodingId",
+        //       fileId: "fileId",
+        //       filename: "filename",
+        //     }),
+        //   });
+        //
+        //   console.log(response);
+        //
+        //   throw new Error("Some error");
+        // }}
       >
         Convert Audio
       </Button>
